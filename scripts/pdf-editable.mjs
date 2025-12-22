@@ -479,7 +479,7 @@ export async function initEditor(html, id_to_display) {
     if (!map_pdf2item) map_pdf2item = {};
 
     // Wait for the IFRAME to appear in the window before any further initialisation
-    iframe.addEventListener('load', async (event) => {
+    iframe.addEventListener('webviewerloaded', async (event) => {
         if (CONFIG.debug.pdfpager) console.debug(`PDF frame loaded for '${document.name}'`);
         let read_pdf = game.settings.get(PDFCONFIG.MODULE_NAME, PDFCONFIG.READ_FIELDS_FROM_PDF);
         let editable = !read_pdf && document.isOwner &&
