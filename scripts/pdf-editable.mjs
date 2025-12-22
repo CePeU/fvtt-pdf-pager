@@ -200,6 +200,8 @@ async function setFormFromDocument(pdfviewer, document, options = {}) {
 
     //const storage = pdfpageview.annotationLayer.annotationStorage;
     let itemcache = new Map();
+    const hasjsactions = await pdfviewer.pdfDocument.hasJSActions();
+
     for (let elem of inputs) {
         if (options.hidebg) elem.style.setProperty('background-image', 'none');
         if (options.nospellcheck) elem.setAttribute('spellcheck', 'false');
@@ -268,10 +270,13 @@ async function setFormFromDocument(pdfviewer, document, options = {}) {
             // Ensure pdfjs is notified of the change
             elem.dispatchEvent(new Event("change"));
         } else if (elem.nodeName === 'IMG') {
-            elem.setAttribute('src', value ? foundry.utils.getRoute(value) : "");
-            elem.dispatchEvent(new Event("change"));
+            if (!elem.parentElement.classList.contains('linkAnnotation')) {
+                elem.setAttribute('src', value ? foundry.utils.getRoute(value) : "");
+                elem.dispatchEvent(new Event("change"));
+            }
         } else {
-            // plain text "type==textarea" OR rich text (type===?)
+            //console.log(`${elem.nodeName} : ${elem.type}`)
+            // INPUT[type=text] or TEXTAREA[type=textarea]
             let newvalue = value ?? "";
             if (elem.value === newvalue) continue;
             // Ensure pdfjs is notified of the change,
@@ -281,7 +286,7 @@ async function setFormFromDocument(pdfviewer, document, options = {}) {
 
             // PDFs which do not have any JSactions must receive an "input" event to set the correct string. (Abena.-.Lvl1.Hunter.-.charsheet.pdf)
             // PDFs with JSactions require a TAB key event to set the correct value.
-            if (elem.type === 'select-one' || !await pdfviewer.pdfDocument.hasJSActions())
+            if (elem.type === 'select-one' || !hasjsactions)
                 elem.dispatchEvent(new KeyboardEvent("input", { target: elem }));
             else
                 elem.dispatchEvent(new KeyboardEvent("keydown", { key: 'Tab' }));
@@ -566,8 +571,8 @@ export async function initEditor(html, id_to_display) {
                 const field_mappings = (document instanceof Actor) ? map_pdf2actor : map_pdf2item;
                 let listname;
                 let datalist;
-                let pdfpageview = layerevent.source;
-                let annotations = await pdfpageview.annotationLayer.pdfPage?.getAnnotations();
+                const pdfpageview = layerevent.source;
+                const annotations = await pdfpageview.annotationLayer.pdfPage?.getAnnotations();
                 const hasjsactions = await pdfviewerapp.pdfDocument.hasJSActions();
                 if (editor_menus) {
                     const flatdoc = myFlattenObject(document);
@@ -640,7 +645,7 @@ export async function initEditor(html, id_to_display) {
 
                         // "updatefromsandbox" is to handle changes made by JS embedded within the PDF,
                         // which don't otherwise trigger HTML events.
-                        if (CONFIG.debug.pdfpager) console.log(`type '${element.type}', id '${element.id}'`)
+                        if (CONFIG.debug.pdfpager) console.log(`${element.nodeName}[type=${element.type}] has id '${element.id}'`)
                         if (element.type === 'checkbox') {
                             element.addEventListener('click', event => setValue(event, "checked"));
                             if (hasjsactions)
@@ -658,10 +663,13 @@ export async function initEditor(html, id_to_display) {
                             // "updatefromsandbox" is complex
                         } else if (element.nodeName === 'A') {
                             // "A" is the for character image; it doesn't have a name attribute normally (neither does the canvas or surrounding section)
-                            let img = element.ownerDocument.createElement("img");
-                            img.name = element.parentNode.getAttribute('data-annotation-id');
-                            img.setAttribute('style', "position:absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: contain");
-                            element.replaceWith(img);
+                            // But ignore any internal PDF linking objects
+                            if (!element.getAttribute('href')) {  // element.href returns the full path to the PDF if the local href is empty
+                                let img = element.ownerDocument.createElement("img");
+                                img.name = element.parentNode.getAttribute('data-annotation-id');
+                                img.setAttribute('style', "position:absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: contain");
+                                element.replaceWith(img);
+                            }
                         } else {
                             if (element.type === 'button') console.log(`Possibly non-clickable button for element.id '${element.id}'`)
                             // blur = lose focus
@@ -916,7 +924,7 @@ async function span_click_edit(event) {
 }
 
 function add_clickable_text(span, macrouuid, clickfunc, doctype) {
-    //console.log(`add_clickable_text: "${span.textContent}"`);
+    if (CONFIG.debug.pdfpager) console.log(`add_clickable_text: "${span.textContent}"`);
     if (span.getAttribute(LABEL_ATTRIBUTE_MACRO)) return;
     span.addEventListener("pointerenter", span_pointerenter);
     span.addEventListener("pointerleave", span_pointerleave);

@@ -5,6 +5,7 @@
 - Only register listeners for each macro button once.
 - Default mapping for dnd5e fixed for saving throws.
 - Listen for correct event before initialising editor.
+- Only replace 'A' elements in the PDF which do NOT have an explicit href value (so that links within the PDF work correctly).
 - Set verified version to 13.351
 
 ## 13.0.3
