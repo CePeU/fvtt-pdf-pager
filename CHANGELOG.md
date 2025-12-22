@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 13.0.4
+
+- Only register listeners for each macro button once.
+- Default mapping for dnd5e fixed for saving throws.
+- Listen for correct event before initialising editor.
+- Set verified version to 13.351
+
 ## 13.0.3
 
 - Prevent error when loading a PDF page with an unsupported anchor.
