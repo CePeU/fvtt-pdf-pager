@@ -34,3 +34,7 @@ dist (not legacy-dist) version of the following:
 - In **SecondaryToolbar** remove options.printButton, options.downloadButton, options.openFileButton
 - In **Toolbar** remove options.print, options.download, **options.editorFreeTextButton, options.editorInkButton, options.editorStampButton**, options.openFile
 - In **Toolbar.#editorModeChanged** remove editorFreeTextButton, editorFreeTextParamsToolbar, editorInkButton, editorInkParamsToolbar, editorStampButton, editorStampParamsToolbar
+
+### Foundry V13 (PDF.JS 4.0.379)
+
+- No change from Foundry V12?
