@@ -87,7 +87,7 @@ class PDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSh
  */
 function JournalEntryPage_onClickDocumentLink(wrapper, event) {
     let pdfsheet = getPdfSheet(this.parent.sheet, this.id);
-    if (updatePdfView(pdfsheet, decodeURIComponent(event.srcElement.dataset.hash))) {
+    if (updatePdfView(pdfsheet, decodeURIComponent(event.target.dataset?.hash ?? event.currentTarget.dataset?.hash))) {
         // Cancel any previous stored anchor
         delete pdfsheet.document.pdfpager_anchor;
         return;
@@ -122,8 +122,9 @@ function JournalEntrySheet_goToPage(wrapper, pageId, anchor) {
  */
 function updatePdfView(pdfsheet, options) {
     const linkService = pdfsheet?.pdfviewerapp?.pdfLinkService;
-    const anchor = (typeof options === 'object') ? options?.anchor : options;
-    if (!linkService || !anchor || anchor === "null") return false;
+    const anchorbase = (typeof options === 'object') ? options?.anchor : options;
+    if (!linkService || !anchorbase || anchorbase === "null") return false;
+    const [ anchor, extra ] = anchorbase.split('?');
 
     const dest = anchor.startsWith('page=') ?
         // Adjust page with configured PDF Page Offset
@@ -136,7 +137,11 @@ function updatePdfView(pdfsheet, options) {
     linkService.setHash(dest);
     // Do the journal.sheet(false, {focus: true}) without re-rendering the app,
     // otherwise we lose the selected page.
-    pdfsheet.document?.parent?.sheet?.bringToFront();
+    if (extra === 'presentationMode')
+        pdfsheet.pdfviewerapp.eventBus.dispatch("presentationmode");
+    else
+        pdfsheet.document?.parent?.sheet?.bringToFront();
+
     return true;
 }
 

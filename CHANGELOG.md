@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 14.2.1 - Presentation Mode & Quick Insert compatibility
+- Replace `Event.srcElement` with `Event.target` in the `_onClickDocumentLink` hook.
+- Also check `Event.currentTarget` in `_onClickDocumentLink` hook so that the `Quick Insert` module can open PDF pages and sections.
+- Add new option to the anchor in journal links, appending `?presentationMode` to the anchor will open the PDF in presentation mode (i.e. full screen), e.g. `@UUID[JournalEntry.L9GgqNy1pGiXnUxQ.JournalEntryPage.wqaaOCuO3HG7AAbb#page=162?presentationMode]{PDF page 162 - presentationMode}`
+
 ## 14.2.0 - New Option to not show the PDF's outline as the journal page's TOC
 - Add a new option "Show PDF Outline as page TOC" (defaults to True) which can be unchecked to prevent the PDF's outline from appearing as the Foundry journal page's TOC.
   - Since the outline is not extracted from the PDF, links that point to headings within the PDF will not work.
