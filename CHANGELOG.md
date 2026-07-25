@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 14.2.2 - PDF Page settings available
+- Fix a bug whereby the PDF journal entry page settings were not being seen.
+
 ## 14.2.1 - Presentation Mode & Quick Insert compatibility
 - Replace `Event.srcElement` with `Event.target` in the `_onClickDocumentLink` hook.
 - Also check `Event.currentTarget` in `_onClickDocumentLink` hook so that the `Quick Insert` module can open PDF pages and sections.

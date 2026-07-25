@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { PDFCONFIG } from './pdf-config.mjs';
+import { PDFCONFIG, SpreadMode } from './pdf-config.mjs';
 import { initEditor } from './pdf-editable.mjs';
 import { getPDFByCode, getPDFByName, initLinker } from './pdf-linker.mjs';
 import { setupAnnotations } from './pdf-annotations.mjs';
@@ -315,9 +315,9 @@ function handle_pdf_sheet(html, pdfsheet) {
         let anchor = pagedoc.pdfpager_anchor;
         if (anchor || game.settings.get(PDFCONFIG.MODULE_NAME, PDFCONFIG.ALWAYS_LOAD_PDF)) {
             let rawlink = false;
-            let pdf_slug = "";
+            let slugs = [];
             if (typeof anchor === 'number')
-                pdf_slug = `#page=${anchor + (pagedoc.getFlag(PDFCONFIG.MODULE_NAME, PDFCONFIG.FLAG_OFFSET) ?? 0)}`;
+                slugs.push(`page=${anchor + (pagedoc.getFlag(PDFCONFIG.MODULE_NAME, PDFCONFIG.FLAG_OFFSET) ?? 0)}`);
             else if (typeof anchor === 'string' && pdfsheet.toc) {
                 // convert TOC entry to PDFSLUG.
                 // if the final slug is a string then it is an entry in the PDF's destination table.
@@ -325,10 +325,10 @@ function handle_pdf_sheet(html, pdfsheet) {
                 let docslug = pdfsheet.toc[anchor]?.pdfslug;
                 let slug = docslug && JSON.parse(docslug);
                 if (typeof slug === 'string')
-                    pdf_slug = `#nameddest=${slug}`;
+                    slugs.push(`nameddest=${slug}`);
                 else if (slug) {
                     // Pass array directly
-                    pdf_slug = `#${docslug}`;
+                    slugs.push(docslug);
                     rawlink = true;
                 }
                 // In all likelihood the outline's array is likely to have an explicit zoom value anyway.
@@ -340,9 +340,10 @@ function handle_pdf_sheet(html, pdfsheet) {
                 if (default_zoom && default_zoom !== 'none') {
                     console.log(`displaying PDF with default zoom of ${default_zoom}%`);
                     if (default_zoom === 'number') default_zoom = game.settings.get(PDFCONFIG.MODULE_NAME, PDFCONFIG.DEFAULT_ZOOM_NUMBER)
-                    pdf_slug += (pdf_slug.length ? "&" : "#") + `zoom=${default_zoom}`;
+                    slugs.push(`zoom=${default_zoom}`);
                 }
             }
+            let pdf_slug = slugs.length ? `#${slugs.join('&')}` : "";
 
             // as JournalPagePDFSheet#_onLoadPDF, but adding optional page-number
             const iframe = document.createElement("iframe");
