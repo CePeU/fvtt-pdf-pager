@@ -46,6 +46,8 @@
         "showFieldMenus.Hint": "Ersetzt jedes editierbare Feld mit einem drop-down Menu aus dem ein Feld des Akteurs/Gegenstandes ausgewählt werden kann. (Fall ein Feld bereits durch eine getter/setter function konfiguriert wurde dann ist das Feld nicht mehr editierbar)",
         "showTitleBarButtons.Name": "Zeige Schaltflächen in der Titelleiste an",
         "showTitleBarButtons.Hint": "Falls aktiviert werden in der Titelleiste Hinweise zu Schaltflächen von Akteure/Gegenstand PDF's angezeigt",
+        "showHeadingsAsToc.Name": "Zeige PDF Lesezeichen als Inhaltsverzeichnis an",
+        "showHeadingsAsToc.Hint": "Falls ausgewählt, wird das Inhaltsverzeichnis für ein PDF im Journal aus den Lesezeichen des PDF erzeugt",
         "showGmButtons.Name": "Zeige Spielleiterschaltflächen in der Titelleiste",
         "showGmButtons.Hint": "Zeige 'Log PDF Felder' and 'Inspiziere Daten' Schaltflächen in der Titelleiste",
         "autoScrollToc.Name": "Automatische Zeilenvorschub für das Inhaltsverzeichnis",
