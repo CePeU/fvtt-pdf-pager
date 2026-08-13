@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## NEXT
+- German translation for "Show Headings as TOC" option from CePeU.
+- Change EN tooltip to reference TOC in foundry rather than outline (also CePeU).
+
 ## 14.2.2 - PDF Page settings available
 - Fix a bug whereby the PDF journal entry page settings were not being seen.
 
